@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CommandDeck</title>
+<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+<div class="scanline"></div>
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">⬡ COMMANDDECK</div>
+    <div class="tagline">OPS DASHBOARD v1.0</div>
+  </div>
+  <div class="topbar-right">
+    <div class="claude-badge" id="claudeBadge">
+      <span class="badge-dot" id="claudeDot"></span>
+      <span id="claudeLabel">CLAUDE OFFLINE</span>
+    </div>
+    <div class="utc-clock" id="utcClock"></div>
+  </div>
+</header>
+
+<main class="dashboard-grid" id="dashboardGrid">
+  <!-- cards injected by JS -->
+</main>
+
+<div class="queue-panel" id="queuePanel">
+  <div class="queue-header">
+    <span>⟳ MESSAGE QUEUE</span>
+    <span class="queue-count" id="queueCount">0</span>
+  </div>
+  <div class="queue-items" id="queueItems"></div>
+</div>
+
+<!-- Resume Modal -->
+<div class="modal-overlay" id="resumeOverlay">
+  <div class="modal" id="resumeModal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span class="proj-badge" id="modalBadge"></span>
+        <span id="modalTitle">RESUME SESSION</span>
+      </div>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <div class="modal-meta" id="modalMeta"></div>
+    <div class="modal-body" id="modalBody">
+      <div class="modal-loading"><span class="spin">⟳</span> BUILDING CONTEXT...</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-copy" id="btnCopy">⎘ COPY PROMPT</button>
+      <button class="btn-copy-open" id="btnCopyOpen">⎘ COPY + OPEN CLAUDE</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/resume.js"></script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CommandDeck — Project</title>
+<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+<div class="scanline"></div>
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="/" class="back-btn">← COMMANDDECK</a>
+    <div class="project-title-bar">
+      <span class="proj-badge" id="projBadge"></span>
+      <span class="proj-name" id="projName">Loading...</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="claude-badge" id="claudeBadge">
+      <span class="badge-dot" id="claudeDot"></span>
+      <span id="claudeLabel">CLAUDE OFFLINE</span>
+    </div>
+    <div class="utc-clock" id="utcClock"></div>
+  </div>
+</header>
+
+<div class="project-layout">
+  <div class="board-columns" id="boardColumns">
+    <div class="board-col" data-status="active">
+      <div class="col-header"><span class="col-dot active"></span>ACTIVE</div>
+      <div class="col-tasks" id="col-active" data-status="active"></div>
+    </div>
+    <div class="board-col" data-status="next">
+      <div class="col-header"><span class="col-dot next"></span>UP NEXT</div>
+      <div class="col-tasks" id="col-next" data-status="next"></div>
+    </div>
+    <div class="board-col" data-status="backlog">
+      <div class="col-header"><span class="col-dot backlog"></span>BACKLOG</div>
+      <div class="col-tasks" id="col-backlog" data-status="backlog"></div>
+    </div>
+    <div class="board-col" data-status="done">
+      <div class="col-header"><span class="col-dot done"></span>DONE</div>
+      <div class="col-tasks" id="col-done" data-status="done"></div>
+    </div>
+  </div>
+
+  <div class="add-task-bar">
+    <input type="text" id="newTaskInput" placeholder="+ Add task..." class="task-input">
+    <select id="newTaskStatus" class="task-select">
+      <option value="active">Active</option>
+      <option value="next">Up Next</option>
+      <option value="backlog" selected>Backlog</option>
+    </select>
+    <label class="auto-label"><input type="checkbox" id="newTaskAuto"> Automatable</label>
+    <button class="add-btn" id="addTaskBtn">ADD</button>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/project.js"></script>
+</body>
+</html>
