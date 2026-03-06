@@ -1,6 +1,6 @@
 # PRODUCTION QUEUE — CommandDeck
 
-**Last Updated:** 2026-03-05
+**Last Updated:** 2026-03-06
 
 ## 🔥 Active / In Progress
 
@@ -9,6 +9,7 @@
   - Shells out to claude CLI with task context + repo path
   - Posts heartbeat to /api/claude/heartbeat
   - Updates queue item status on completion
+  - claude CLI at: C:\Users\john_\AppData\Local\AnthropicClaude\app-1.1.4498\claude.exe
 
 ## 📋 Up Next
 
@@ -28,6 +29,11 @@
 - [x] Message queue panel — bottom-right, live via WebSocket
 - [x] ⚡ DO IT button — pushes task to queue (activates when Claude online)
 - [x] UTC clock, Claude status badge
+- [x] Resume Session modal — per project, builds context prompt from live git log,
+      git status, active tasks, PRODUCTION_QUEUE.md, OPEN-ISSUES.md
+- [x] COPY + OPEN CLAUDE button — one click to start a zero-ramp session
+- [x] Smart start.bat — skips pip install if deps already present
+- [x] .gitignore — excludes db and __pycache__
 
 ## 📌 Backlog
 
