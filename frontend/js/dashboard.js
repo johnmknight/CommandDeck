@@ -18,7 +18,7 @@ function buildCard(p) {
         <span class="card-badge">${p.short_name}</span>
         <span class="card-name">${p.name}</span>
       </div>
-      ${p.port ? `<span class="card-port">:${p.port}</span>` : ''}
+      ${p.port ? `<span class="card-port">${p.host && p.host !== 'localhost' ? p.host : ''}:${p.port}</span>` : ''}
     </div>
     <div class="card-stats">
       <div class="stat"><span class="stat-val active">${s.active||0}</span><span class="stat-lbl">Active</span></div>
@@ -32,7 +32,7 @@ function buildCard(p) {
       <div class="card-actions">
         <button class="btn-resume" onclick="openResume('${p.id}','${p.name}','${p.short_name}','${color}')" style="--proj-color:${color}">▶ RESUME</button>
         <button class="btn-view" onclick="location.href='/project/${p.id}'">BOARD</button>
-        ${p.port ? `<button class="btn-launch" onclick="window.open('http://localhost:${p.port}','_blank')">LAUNCH</button>` : ''}
+        ${p.port ? `<button class="btn-launch" onclick="window.open('http://${p.host||'localhost'}:${p.port}','_blank')">LAUNCH</button>` : ''}
         ${(s.automatable||0) > 0 ? `<span class="automatable-count"><span class="auto-dot"></span>${s.automatable}</span>` : ''}
       </div>
     </div>`;
