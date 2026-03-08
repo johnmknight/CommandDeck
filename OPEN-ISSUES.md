@@ -1,6 +1,6 @@
 # OPEN ISSUES — CommandDeck
 
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-08
 
 ## 🐛 Bugs / Known Issues
 
@@ -20,8 +20,18 @@
 - Drag-drop reorder updates priority + status atomically via POST /api/tasks/reorder
 - Resume modal pulls live git log + status from repo path stored in projects table
 - COPY + OPEN CLAUDE opens https://claude.ai/new — user pastes prompt, zero ramp-up
+- Projects table schema: id, name, short_name, description, color, repo_path, port,
+  github_url, created_at, host
 
 ## 📝 Session Notes
+
+### 2026-03-08
+- Added JohnsSpares project to dashboard (id=johnsspares, JS badge, rose #F43F5E, port 7700)
+- Seeded 10 tasks from JohnsSpares PRODUCTION_QUEUE.md:
+  - 3 active (porthole bar bug, endcap symmetry, shading band)
+  - 2 next (KSP test, IVA stub)
+  - 5 backlog (normal map, logo art, triangulate, MM patch, hab_250_30l)
+- JohnsSpares card live on dashboard showing 3/2/10/0 stats
 
 ### 2026-03-06
 - Added Resume Session feature — modal with live git context, active tasks, docs

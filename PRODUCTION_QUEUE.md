@@ -1,6 +1,6 @@
 # PRODUCTION QUEUE — CommandDeck
 
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-08
 
 ## 🔥 Active / In Progress
 
@@ -34,6 +34,8 @@
 - [x] COPY + OPEN CLAUDE button — one click to start a zero-ramp session
 - [x] Smart start.bat — skips pip install if deps already present
 - [x] .gitignore — excludes db and __pycache__
+- [x] JohnsSpares project added — id=johnsspares, color=#F43F5E, port=7700,
+      repo=C:\Users\john_\dev\JohnsSpares, 10 tasks seeded from PRODUCTION_QUEUE.md
 
 ## 📌 Backlog
 
