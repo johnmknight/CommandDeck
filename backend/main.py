@@ -2,9 +2,12 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Requ
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-import sqlite3, json, os, uuid, subprocess
+import sqlite3, json, os, uuid, subprocess, requests as req_lib
 from datetime import datetime, timezone
 from pathlib import Path
+
+# Relay: Windows dev box serves git + file context (Option A architecture)
+RELAY_URL = os.environ.get("RELAY_URL", "")  # e.g. http://192.168.4.47:8099
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH  = os.path.join(BASE_DIR, "commanddeck.db")
@@ -339,16 +342,30 @@ async def resume_session(pid: str):
         raise HTTPException(404)
 
     repo = proj.get("repo_path", "")
-    has_repo = repo and Path(repo).exists()
 
-    # git info
-    git_log    = run_git(repo, ["log", "--oneline", "-7"]) if has_repo else "(no repo)"
-    git_status = run_git(repo, ["status", "--short"])      if has_repo else "(no repo)"
-    git_branch = run_git(repo, ["branch", "--show-current"]) if has_repo else ""
+    # Try relay first (Option A: Windows dev box has the repos)
+    relay_ctx = None
+    if RELAY_URL and repo:
+        try:
+            r = req_lib.post(f"{RELAY_URL}/relay/resume", json={"repo_path": repo}, timeout=5)
+            if r.status_code == 200:
+                relay_ctx = r.json()
+        except Exception:
+            pass  # fall through to local
 
-    # docs
-    pq   = read_doc(repo, "PRODUCTION_QUEUE.md", 80)
-    oi   = read_doc(repo, "OPEN-ISSUES.md", 60)
+    if relay_ctx:
+        git_log    = relay_ctx.get("git_log", "(relay error)")
+        git_status = relay_ctx.get("git_status", "(relay error)")
+        git_branch = relay_ctx.get("git_branch", "main")
+        pq         = relay_ctx.get("pq", "(not found)")
+        oi         = relay_ctx.get("oi", "(not found)")
+    else:
+        has_repo = repo and Path(repo).exists()
+        git_log    = run_git(repo, ["log", "--oneline", "-7"]) if has_repo else "(no repo)"
+        git_status = run_git(repo, ["status", "--short"])      if has_repo else "(no repo)"
+        git_branch = run_git(repo, ["branch", "--show-current"]) if has_repo else ""
+        pq   = read_doc(repo, "PRODUCTION_QUEUE.md", 80)
+        oi   = read_doc(repo, "OPEN-ISSUES.md", 60)
 
     # build active task list
     active_lines = []
