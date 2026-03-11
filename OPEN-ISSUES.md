@@ -1,44 +1,60 @@
 # OPEN ISSUES — CommandDeck
 
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-11
+
+## 🔴 Blocked — User Action Required
+
+- [ ] **ANTHROPIC_API_KEY not set as Windows user env var**
+  - Without this, agent.py exits immediately on start
+  - Fix: System Properties → Advanced → Environment Variables → User variables → New
+    - Name: `ANTHROPIC_API_KEY`
+    - Value: your key from https://console.anthropic.com/settings/keys
+  - After setting, run `services\register_tasks.bat` as Administrator to install
+    relay + agent as onlogon scheduled tasks
 
 ## 🐛 Bugs / Known Issues
 
-- [ ] claude --version returns no version string (only deprecation warnings) — cosmetic, no impact
+- [ ] claude --version returns no version string (only deprecation warnings) — cosmetic
 - [ ] Claude status badge stays OFFLINE until agent.py sends first heartbeat — by design
 - [ ] DO IT buttons hidden until Claude heartbeat < 60s — by design
+- [ ] Resume modal shows "(no repo)" / "(not found)" if relay is not running — expected
+  - Relay must be live at http://192.168.4.47:8099 for git + file context to populate
 
-## 🔄 Not Yet Built
+## ✅ Resolved This Session (2026-03-11)
 
-- [ ] agent.py — the entire Claude ↔ queue loop. Next session priority #1.
-- [ ] claude CLI non-interactive mode — needs --print flag testing before agent.py
+- [x] Resume modal "(no repo)" / "(not found)" — root cause identified: appserv1 can't
+      access Windows paths. Fixed via Option A relay architecture (relay.py on devbox:8099)
+- [x] agent.py — built, committed, and running (pending API key env var)
+- [x] relay.py — built, committed, running live at http://192.168.4.47:8099
+- [x] Windows scheduled task installers — built (register_tasks.bat, install_service.bat)
 
-## 💡 Design Notes
+## 📐 Design Notes
 
-- Queue directions: user_to_claude (DO IT button) / claude_to_user (agent replies)
-  Both exist in schema; only user_to_claude used so far.
-- Drag-drop reorder updates priority + status atomically via POST /api/tasks/reorder
-- Resume modal pulls live git log + status from repo path stored in projects table
-- COPY + OPEN CLAUDE opens https://claude.ai/new — user pastes prompt, zero ramp-up
-- Projects table schema: id, name, short_name, description, color, repo_path, port,
-  github_url, created_at, host
+- Architecture: Option A — CommandDeck on appserv1:8090, relay on devbox:8099
+  - appserv1 handles UI + queue + WebSocket
+  - devbox relay serves git log, git status, file contents to appserv1 resume endpoint
+  - devbox agent polls queue, calls Anthropic API, posts claude_to_user responses
+- Queue directions: user_to_claude (DO IT) / claude_to_user (agent replies)
+- Relay endpoints: GET /relay/git, GET /relay/file, GET /relay/exists, GET /health
+- Agent model: claude-opus-4-5 (override via AGENT_MODEL env var)
+- Agent log: C:\Users\john_\dev\CommandDeck\agent\agent.log
 
-## 📝 Session Notes
+## 📋 Session Notes
+
+### 2026-03-11
+- Identified relay + agent already built in prior session (uncommitted)
+- Committed all: agent/, relay/, services/, Dockerfile, .env.example, updated main.py
+- Pushed to GitHub (commit 72b64c6)
+- Relay started and verified live: http://localhost:8099/health ✅
+- Agent blocked on ANTHROPIC_API_KEY — needs user to set Windows env var
 
 ### 2026-03-08
-- Added JohnsSpares project to dashboard (id=johnsspares, JS badge, rose #F43F5E, port 7700)
-- Seeded 10 tasks from JohnsSpares PRODUCTION_QUEUE.md:
-  - 3 active (porthole bar bug, endcap symmetry, shading band)
-  - 2 next (KSP test, IVA stub)
-  - 5 backlog (normal map, logo art, triangulate, MM patch, hab_250_30l)
-- JohnsSpares card live on dashboard showing 3/2/10/0 stats
+- Added JohnsSpares project (id=johnsspares, JS badge, rose #F43F5E, port 7700)
+- Seeded 10 tasks from JohnsSpares PRODUCTION_QUEUE.md
 
 ### 2026-03-06
-- Added Resume Session feature — modal with live git context, active tasks, docs
-- Added smart start.bat — skips pip install if fastapi already present
-- Added .gitignore — excludes db and __pycache__
-- Committed all changes to master branch
-- Stopped before building agent.py — next session starts here
+- Added Resume Session feature + smart start.bat + .gitignore
+- Stopped before building agent.py
 
 ### 2026-03-05
 - Built full stack in one session
