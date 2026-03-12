@@ -2,40 +2,40 @@
 
 **Last Updated:** 2026-03-11
 
+## 🔴 Active / In Progress
+
+_(nothing — session complete)_
+
+## 🟡 Up Next
+
+- [ ] Dashboard: show queue history (done items)
+- [ ] Dashboard: Claude current task display in topbar
+- [ ] Wire relay health indicator into CommandDeck topbar
+- [ ] Register scheduled tasks (needs admin terminal — `services\register_tasks.bat`)
+
 ## ✅ Recently Completed
 
 - [x] FastAPI backend — projects, tasks, queue, claude status, WebSocket
 - [x] SQLite schema — projects, tasks, queue_items, claude_status
+- [x] Seed data from all 5 project PRODUCTION_QUEUE.md / OPEN-ISSUES.md
 - [x] Dashboard — 5 project cards with stats, top task, color per project
 - [x] Kanban board — 4-column drag-drop per project
 - [x] Message queue panel — bottom-right, live via WebSocket
-- [x] DO IT button — pushes task to queue
+- [x] ▶ DO IT button — pushes task to queue
 - [x] UTC clock, Claude status badge
-- [x] Resume Session modal — per project, live git context + active tasks
+- [x] Resume Session modal — per project, full git context + tasks + docs
 - [x] COPY + OPEN CLAUDE button — one click to start a zero-ramp session
+- [x] Smart start.bat — skips pip install if deps already present
 - [x] JohnsSpares project added
-- [x] **Option A architecture — relay + agent + services (2026-03-11)**
-  - relay/relay.py: FastAPI on devbox:8099, exposes git + file data to appserv1
-  - agent/agent.py: Claude agent loop — polls queue, calls Anthropic API, posts responses
-  - backend/main.py: resume endpoint wired to relay for live git/file context
-  - Windows scheduled task installers for relay + agent (onlogon, hidden window)
-  - Committed + pushed to GitHub (commit 72b64c6)
-
-## 🔴 Blocked — User Action Required
-
-- [ ] Set ANTHROPIC_API_KEY as Windows user environment variable
-  - System Properties → Advanced → Environment Variables → User variables → New
-  - Name: ANTHROPIC_API_KEY  Value: sk-ant-...
-  - Then run: services\register_tasks.bat (as Administrator)
-  - This registers relay + agent as onlogon scheduled tasks (persistent across reboots)
-
-## 🔜 Up Next
-
-- [ ] Wire claude CLI --print flag for non-interactive execution (optional v2)
-- [ ] Agent context builder — inject PRODUCTION_QUEUE.md + OPEN-ISSUES.md per project
-- [ ] agent.py error handling + retry logic
-- [ ] Dashboard: show queue history (done items)
-- [ ] Dashboard: Claude current task display in topbar
+- [x] Option A architecture: relay.py on Windows devbox (192.168.4.47:8099)
+- [x] agent.py — full Claude API polling loop
+- [x] relay.py — running live, health endpoint confirmed
+- [x] SQLite busy_timeout + WAL mode — fixed db lock contention
+- [x] requests added to Docker requirements
+- [x] ANTHROPIC_API_KEY set as Windows User env var
+- [x] Auto-start: relay + agent shortcuts in Windows Startup folder
+- [x] End-to-end test PASSED — DO IT → agent picks up → API call → response posted
+- [x] All committed and pushed to GitHub
 
 ## 🗂 Backlog
 
