@@ -70,10 +70,11 @@ def init_db():
 def seed(conn):
     c = conn.cursor()
     c.executemany("INSERT INTO projects VALUES (?,?,?,?,?,?,?,?,datetime('now'))", [
-        ("artemisops","ArtemisOps","AO","NASA mission control — ISS tracking, Artemis countdown, kiosk","#F97316",r"C:\Users\john_\dev\ArtemisOps",8000,"https://github.com/johnmknight/ArtemisOps"),
-        ("marchog","MarchogSystemsOps","MSO","Star Wars themed multi-screen display control system","#EAB308",r"C:\Users\john_\dev\MarchogSystemsOps",8083,""),
+        ("artemisops","ArtemisOps","AO","NASA mission control — ISS tracking, Artemis countdown, kiosk","#F97316",r"C:\Users\john_\dev\ArtemisOps",8085,"https://github.com/johnmknight/ArtemisOps"),
+        ("marchog","MarchogSystemsOps","MSO","Star Wars themed multi-screen display control system","#EAB308",r"C:\Users\john_\dev\MarchogSystemsOps",8082,""),
         ("captainmurphys","CaptainMurphys","CM","Themed home office 3D room planner","#A855F7",r"C:\Users\john_\dev\CaptainMurphys",8081,""),
         ("findajob","FindAJob","FAJ","Career ops — job scraping, contact intel, application tracking","#0EA5E9",r"C:\Users\john_\dev\FindAJob",8100,""),
+        ("smartlablauncher","SmartLabLauncher","SLL","Cinematic 2001-style app launcher for all SmartLab production services","#64748B",r"C:\Users\john_\dev\SmartLabLauncher",80,"https://github.com/johnmknight/smartlab-launcher"),
         ("tikibar","TikiBarOnTheMoon","TBM","Sci-fi novel — The First Tiki Bar on the Moon","#10B981",r"C:\Users\john_\dev\TikiBarOnTheMoon",None,"https://github.com/johnmknight/TikiBarOnTheMoon"),
     ])
     c.executemany("INSERT INTO tasks (id,project_id,title,status,priority,category,automatable) VALUES (?,?,?,?,?,?,?)", [
