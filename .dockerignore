@@ -1,0 +1,13 @@
+.git
+.github
+.env
+*.db
+*.db-journal
+*.db.bak
+*.pyc
+__pycache__
+agent/
+relay/
+services/
+*.log
+*.lnk
