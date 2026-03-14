@@ -2,12 +2,16 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Requ
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 import sqlite3, json, os, uuid, subprocess, requests as req_lib
 from datetime import datetime, timezone
 from pathlib import Path
 
+load_dotenv()  # loads .env from project root
+
 # Relay: Windows dev box serves git + file context (Option A architecture)
 RELAY_URL = os.environ.get("RELAY_URL", "")  # e.g. http://192.168.4.47:8099
+APP_SERVER_URL = os.environ.get("APP_SERVER_URL", "")  # e.g. http://192.168.4.148 — production nginx
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH  = os.path.join(BASE_DIR, "commanddeck.db")
@@ -236,7 +240,10 @@ async def get_apps():
         ORDER BY sort_order ASC
     """).fetchall()]
     conn.close()
-    return rows
+    return {
+        "app_server_url": APP_SERVER_URL,
+        "apps": rows
+    }
 
 @app.patch("/api/projects/{pid}")
 async def update_project(pid: str, req: Request):
