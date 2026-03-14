@@ -31,7 +31,7 @@ function buildCard(p) {
       <div class="next-task">${p.top_task.title}</div>` : '<div class="next-task" style="color:var(--text-dim)">No active tasks</div>'}
       <div class="card-actions">
         <button class="btn-resume" onclick="openResume('${p.id}','${p.name}','${p.short_name}','${color}')" style="--proj-color:${color}">▶ RESUME</button>
-        <button class="btn-view" onclick="location.href='/project/${p.id}'">BOARD</button>
+        <button class="btn-view" onclick="location.href=BASE+'/project/${p.id}'">BOARD</button>
         ${p.port ? `<button class="btn-launch" onclick="window.open('http://${p.host||'localhost'}:${p.port}','_blank')">LAUNCH</button>` : ''}
         ${(s.automatable||0) > 0 ? `<span class="automatable-count"><span class="auto-dot"></span>${s.automatable}</span>` : ''}
       </div>
