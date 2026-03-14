@@ -123,6 +123,58 @@ def seed(conn):
     ])
     conn.commit()
 
+# ── DB Migration — adds launcher columns to existing databases ────────────────
+def migrate_db():
+    conn = db()
+    # Add new columns (silently skip if already present)
+    for col, typedef in [
+        ("route_path",  "TEXT"),
+        ("glyph_svg",   "TEXT"),
+        ("bg_js",       "TEXT"),
+        ("is_deployed", "INTEGER DEFAULT 0"),
+        ("sort_order",  "INTEGER DEFAULT 0"),
+    ]:
+        try:
+            conn.execute(f"ALTER TABLE projects ADD COLUMN {col} {typedef}")
+        except sqlite3.OperationalError:
+            pass  # column already exists
+
+    # Insert SmartToolbox + CommandDeck if missing (not in original seed)
+    conn.execute("""INSERT OR IGNORE INTO projects
+        (id, name, short_name, description, color, repo_path, port, github_url,
+         route_path, is_deployed, sort_order)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+        ("smarttoolbox", "SmartToolbox", "STB",
+         "IoT inventory management — AI scan, RFID, ESP32 hardware",
+         "#1A42CC", r"C:\Users\john_\dev\smarttoolbox", 8091,
+         "", "/toolbox/", 1, 0))
+
+    conn.execute("""INSERT OR IGNORE INTO projects
+        (id, name, short_name, description, color, repo_path, port, github_url,
+         route_path, is_deployed, sort_order)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+        ("commanddeck", "CommandDeck", "CDK",
+         "Unified ops dashboard — projects, tasks, message queue, agent control",
+         "#7B22B0", r"C:\Users\john_\dev\CommandDeck", 8090,
+         "", "/deck/", 1, 1))
+
+    # Set launcher metadata for all deployed apps
+    # (color + port aligned to launcher palette and docker-compose)
+    deployed = [
+        ("smarttoolbox", "#1A42CC", "/toolbox/", 1, 0, 8091),   # cobalt
+        ("commanddeck",  "#7B22B0", "/deck/",    1, 1, 8090),   # violet
+        ("artemisops",   "#1A5C8A", "/artemis/", 1, 2, 8085),   # teal
+        ("marchog",      "#8A1A1A", "/marchog/", 1, 3, 8082),   # crimson
+    ]
+    for pid, color, route, dep, order, port in deployed:
+        conn.execute("""UPDATE projects
+            SET color=?, route_path=?, is_deployed=?, sort_order=?, port=?
+            WHERE id=?""",
+            (color, route, dep, order, port, pid))
+
+    conn.commit()
+    conn.close()
+
 # ── WebSocket Manager ─────────────────────────────────────────────────────────
 class WS:
     def __init__(self): self.conns: list[WebSocket] = []
@@ -170,6 +222,43 @@ async def get_project(pid: str):
     conn.close()
     if not p: raise HTTPException(404)
     return p
+
+# ── Launcher Apps API ─────────────────────────────────────────────────────────
+@app.get("/api/apps")
+async def get_apps():
+    """Return deployed apps for the SmartLab Launcher."""
+    conn = db()
+    rows = [r2d(r) for r in conn.execute("""
+        SELECT id, short_name AS code, name, color, port,
+               route_path, glyph_svg, bg_js
+        FROM projects
+        WHERE is_deployed = 1
+        ORDER BY sort_order ASC
+    """).fetchall()]
+    conn.close()
+    return rows
+
+@app.patch("/api/projects/{pid}")
+async def update_project(pid: str, req: Request):
+    """Update project fields (used by launcher admin mode for glyph/bg)."""
+    data = await req.json()
+    conn = db()
+    fields, vals = [], []
+    allowed = ("name","short_name","description","color","repo_path","port",
+               "github_url","route_path","glyph_svg","bg_js","is_deployed","sort_order")
+    for k in allowed:
+        if k in data:
+            fields.append(f"{k}=?")
+            vals.append(data[k])
+    if not fields:
+        conn.close(); raise HTTPException(400, "no valid fields")
+    vals.append(pid)
+    conn.execute(f"UPDATE projects SET {','.join(fields)} WHERE id=?", vals)
+    conn.commit()
+    row = r2d(conn.execute("SELECT * FROM projects WHERE id=?", (pid,)).fetchone())
+    conn.close()
+    if not row: raise HTTPException(404)
+    return row
 
 @app.get("/api/projects/{pid}/tasks")
 async def get_tasks(pid: str):
@@ -305,7 +394,9 @@ async def websocket_endpoint(ws: WebSocket):
 
 # ── Startup ───────────────────────────────────────────────────────────────────
 @app.on_event("startup")
-async def startup(): init_db()
+async def startup():
+    init_db()
+    migrate_db()
 
 # ── Resume Session Endpoint ───────────────────────────────────────────────────
 def run_git(repo: str, args: list) -> str:
