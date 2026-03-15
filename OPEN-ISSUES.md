@@ -1,6 +1,6 @@
 # OPEN ISSUES — CommandDeck
 
-**Last Updated:** 2026-03-11
+**Last Updated:** 2026-03-15
 
 ## 🔴 Blocked — User Action Required
 
@@ -36,6 +36,14 @@
 - Agent log: C:\Users\john_\dev\CommandDeck\agent\agent.log
 
 ## 📋 Session Notes
+
+### 2026-03-15
+- Relay and agent were both down (not running since last reboot)
+- Root cause: VBS Startup folder launchers depend on User env vars loaded at login
+- Desktop Commander shell doesn't inherit User env vars — ANTHROPIC_API_KEY missing
+- Manually started relay (localhost:8099 ✅) and agent (heartbeat confirmed idle ✅)
+- Full pipeline restored: DO IT → agent → Claude API → response
+- No code changes to CommandDeck this session — operational restart only
 
 ### 2026-03-11 (evening)
 - Set ANTHROPIC_API_KEY as Windows User env var

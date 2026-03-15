@@ -3,3 +3,4 @@ backend/*.db
 *.pyc
 .env
 *.log
+.gitmsg
