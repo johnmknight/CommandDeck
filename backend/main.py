@@ -245,6 +245,37 @@ async def get_apps():
         "apps": rows
     }
 
+@app.post("/api/projects")
+async def create_project(req: Request):
+    """Create a new project."""
+    data = await req.json()
+    conn = db()
+    
+    # Generate ID from name if not provided
+    pid = data.get("id")
+    if not pid:
+        pid = data["name"].lower().replace(" ", "").replace("-", "")
+    
+    # Check if project already exists
+    existing = conn.execute("SELECT id FROM projects WHERE id=?", (pid,)).fetchone()
+    if existing:
+        conn.close()
+        raise HTTPException(400, f"Project {pid} already exists")
+    
+    conn.execute("""INSERT INTO projects 
+        (id, name, short_name, description, color, repo_path, port, github_url, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        (pid, data["name"], data.get("short_name", ""), 
+         data.get("description", ""), data.get("color", "#64748B"),
+         data.get("repo_path", ""), data.get("port"),
+         data.get("github_url", ""), now()))
+    
+    conn.commit()
+    row = r2d(conn.execute("SELECT * FROM projects WHERE id=?", (pid,)).fetchone())
+    conn.close()
+    await ws_mgr.broadcast({"type":"project_created","project":row})
+    return row
+
 @app.patch("/api/projects/{pid}")
 async def update_project(pid: str, req: Request):
     """Update project fields (used by launcher admin mode for glyph/bg)."""
