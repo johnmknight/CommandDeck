@@ -4,3 +4,5 @@ backend/*.db
 .env
 *.log
 .gitmsg
+agent/*.log 
+agent/*.log.* 
